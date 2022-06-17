@@ -2,9 +2,7 @@ package main;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -23,13 +21,27 @@ public class FashionWebscraper
         websiteDoc = CreateDocument(websiteURL);
         
         PrintWebsiteTitle();
-        
-        GetIndividualProductLinks();
-        
+              
         GetSpecificProductDetails();
         
         PrintProducts();
         
+    }
+    
+    private static void PrintWebsiteTitle() 
+    {
+        System.out.println("---Website Title---");
+        System.out.println(websiteDoc.title());
+    }
+    
+    private static void GetSpecificProductDetails()
+    {
+        GetIndividualProductLinks();
+        
+        for (String productLink : newArrivalProductLinks) 
+        {
+            ParseProduct(productLink);
+        }
     }
 
     public static void GetIndividualProductLinks() 
@@ -57,20 +69,6 @@ public class FashionWebscraper
         return null;
     }
 
-    private static void PrintWebsiteTitle() 
-    {
-        System.out.println("---Website Title---");
-        System.out.println(websiteDoc.title());
-    }
-
-    private static void GetSpecificProductDetails()
-    {
-        for (String productLink : newArrivalProductLinks) 
-        {
-            ParseProduct(productLink);
-        }
-    }
-
     private static void ParseProduct(String productLink) 
     {
         Document productDoc = CreateDocument(productLink);
@@ -78,8 +76,9 @@ public class FashionWebscraper
         String productName = GetProductName(productDoc);
         String productPrice = GetProductPrice(productDoc);
         String productDescription = GetProductDescription(productDoc);
+        String productID = GetProductID(websiteDoc);
         
-        products.add(CreateProduct(productName, productPrice, productDescription));
+        products.add(new Product(productName, productPrice, productDescription, productID));
     }
 
     private static String GetProductPrice(Document productDoc) 
@@ -87,11 +86,6 @@ public class FashionWebscraper
         Element productPrice = productDoc.getElementById("product-new-price");
         return productPrice.text().trim();
     }
-
-//    private static String GetProductName(Document productDoc)
-//    {
-////        Element productName = productDoc.GetEleme
-//    }
 
     private static String GetProductDescription(Document productDoc) 
     {
@@ -117,10 +111,6 @@ public class FashionWebscraper
         return productName;
     }
 
-    private static Product CreateProduct(String productName, String productPrice, String productDescription) {
-        return new Product(productName, productPrice, productDescription);
-    }
-
     private static void PrintProducts() 
     {
         System.out.println("---Products---");
@@ -128,5 +118,18 @@ public class FashionWebscraper
         {
             System.out.println(product);
         }
+    }
+
+    private static String GetProductID(Document websiteDoc)
+    {
+        String productID = "";
+        Elements productIDs = websiteDoc.getElementsByAttribute("data-product-id");
+        
+        for (Element ID : productIDs)
+        {
+            productID = ID.attr("data-product-id");
+            break;
+        }
+        return productID;
     }
 }
