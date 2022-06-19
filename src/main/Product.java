@@ -24,5 +24,25 @@ public class Product
                 + "Description: " + description + "\n"
                 + "ID: " + id + "\n"; 
     }
+
+    String getName() 
+    {
+        return name;
+    }
+
+    String getID() 
+    {
+        return id;
+    }
+
+    double getPrice() 
+    {
+        return Double.parseDouble(price.replaceAll("\\$", ""));
+    }
+
+    String getDescription() 
+    {
+        return description;
+    }
     
 }

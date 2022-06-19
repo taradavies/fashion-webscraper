@@ -13,28 +13,33 @@ public class FashionWebscraper
     private static Document websiteDoc;
     private static HashSet<String> newArrivalProductLinks = new HashSet<>();
     private static ArrayList<Product> products = new ArrayList<>();
-
+    
+    private static FashionDatabase database;
     
     public static void main(String[] args) 
     {
         String websiteURL = "https://fordays.com/";
         websiteDoc = CreateDocument(websiteURL);
         
-        PrintWebsiteTitle();
+        printWebsiteTitle();
               
-        GetSpecificProductDetails();
+        getSpecificProductDetails();
         
-        PrintProducts();
+        database = new FashionDatabase("fordaysProducts");
+                
+        addProductsToDatabase();
         
+        printProducts();
     }
     
-    private static void PrintWebsiteTitle() 
+    private static void printWebsiteTitle() 
     {
         System.out.println("---Website Title---");
         System.out.println(websiteDoc.title());
+        System.out.println("");
     }
     
-    private static void GetSpecificProductDetails()
+    private static void getSpecificProductDetails()
     {
         GetIndividualProductLinks();
         
@@ -111,15 +116,6 @@ public class FashionWebscraper
         return productName;
     }
 
-    private static void PrintProducts() 
-    {
-        System.out.println("---Products---");
-        for (Product product : products)
-        {
-            System.out.println(product);
-        }
-    }
-
     private static String GetProductID(Document websiteDoc)
     {
         String productID = "";
@@ -131,5 +127,22 @@ public class FashionWebscraper
             break;
         }
         return productID;
+    }
+    
+    private static void printProducts() 
+    {
+        System.out.println("---Products---");
+        for (Product product : products)
+        {
+            System.out.println(product);
+        }
+    }
+
+    private static void addProductsToDatabase()
+    {
+        for (Product product : products)
+        {
+            database.addProductToDatabase(product);
+        }
     }
 }
